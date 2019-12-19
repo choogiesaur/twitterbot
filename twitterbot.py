@@ -54,7 +54,9 @@ if __name__ == "__main__":
 		pokeymans = [line.strip() for line in f]
 
 	# Choose random one and construct tweet body, image link
-	choice 	= random.choice(pokeymans)
+	choice  = raw_input("Enter pokeyman: ")
+	if choice not in pokeymans:
+		choice = random.choice(pokeymans)
 	tweet_body 	= "A wild " + choice + " appears!"
 	image_url 	= link_dict[choice]
 	
