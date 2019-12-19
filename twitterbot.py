@@ -57,7 +57,7 @@ if __name__ == "__main__":
 	choice  = raw_input("Enter pokeyman: ")
 	if choice not in pokeymans:
 		choice = random.choice(pokeymans)
-	tweet_body 	= "A wild " + choice + " appears!"
+	tweet_body 	= "Wild #" + choice.upper() + " appeared!"
 	image_url 	= link_dict[choice]
 	
 	print(tweet_body)
