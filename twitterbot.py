@@ -3,9 +3,7 @@ import random
 import requests
 import os
 
-# for acct in account_list:
-# 	user = api.get_user(acct)
-# 	# print(user.__dict__)
+from PIL import Image
 
 def get_api():
 	consumer_key 	= os.getenv('CONSUMER_KEY')
@@ -18,27 +16,47 @@ def get_api():
 	return tweepy.API(auth)	
 
 def tweet_image(api, url, message):
-	# api = get_api()
-	file_name = 'temp.jpg'
+	file_name = 'temp.png'
 	request = requests.get(url, stream=True)
 	if request.status_code == 200:
 		with open(file_name, 'wb') as image:
 			for chunk in request:
 				image.write(chunk)
+		resize_png(file_name)
 		api.update_with_media(file_name, status=message)
 	else:
 		print("Unable to download image.")
 
-if __name__ == "__main__":
-	api = get_api()
+def generate_dict(link_file):
+	with open(link_file) as f:
+		link_dict = {}
+		for line in f:
+			(key, val) = line.split('|')
+			link_dict[key] = val.strip()
+		return link_dict
 
+def resize_png(file_name):
+	im = Image.open(file_name)
+	newsize = (256, 256)
+	im_out = im.resize(newsize)
+	im_out.save(file_name)
+
+if __name__ == "__main__":
+
+	# API setup
+	api = get_api()
+	
+	# Read text file to generate pokemon->icon dict
+	link_dict = generate_dict('pokemon_links.txt')
+	
+	# Create list of pokemon
 	with open('pokemon.txt') as f:
 		pokeymans = [line.strip() for line in f]
 
-	choice = random.choice(pokeymans)
-	print(choice)
-
+	# Choose random one and construct tweet body, image link
+	choice 	= random.choice(pokeymans)
 	tweet_body 	= "A wild " + choice + " appears!"
-	image_url 	= 'https://i.imgur.com/Zq0iBJKg.jpg'
-	# api.update_status("A wild "+choice+" appears!")
+	image_url 	= link_dict[choice]
+	
+	print(tweet_body)
 	tweet_image(api, image_url, tweet_body)
