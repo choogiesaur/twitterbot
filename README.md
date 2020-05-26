@@ -1,2 +1,2 @@
 # twitterbot
-twitterbot code
+tweets out random pokemon encounters
